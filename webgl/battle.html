@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>シューティングゲーム</title>
+    <script src="three.min.js"></script>
+    <style type="text/css">
+      div#canvas-frame{
+	  border: none;
+	  cursor: pointer;
+	  width: 1000px;
+	  height: 600px;
+	  background-color: #EEEEEE;
+      }
+    </style>
+    <script>
+      var width, height;
+      var renderer;
+      function initThree() {
+	  width = document.getElementById('canvas-frame').clientWidth;
+	  height = document.getElementById('canvas-frame').clientHeight;  
+	  renderer = new THREE.WebGLRenderer({antialias: true});
+	  renderer.setSize(width, height );
+	  document.getElementById('canvas-frame').appendChild(renderer.domElement);
+	  renderer.setClearColorHex(0x0f1a33, 1.0);
+      }
+      
+      var camera;
+      function initCamera() {  
+	  camera = new THREE.PerspectiveCamera( 45 , width / height , 1 , 10000 );
+	  camera.position.x = 0;
+	  camera.position.y = -100;
+	  camera.position.z = 0;
+	  camera.up.x = 0;
+	  camera.up.y = 0;
+	  camera.up.z = 1;
+	  camera.lookAt( {x:0, y:0, z:0 } );
+      }
+      var scene;
+      function initScene() {    
+	  scene = new THREE.Scene();
+      }
+      var light;
+      function initLight() {  
+	  light = new THREE.DirectionalLight(0xFFFFFF, 1.0, 0);
+	  light.position.set( 100, 100, 200 );
+	  scene.add(light);
+      }
+      var tama = Array(),tama2 = Array();
+      var haner,hanel,body,sentan,tabo1,tabo2,sentouki,idou1;
+      var haner2,hanel2,body2,sentan2,tabo12,tabo22,sentouki2,idou2;
+      var hoshi = Array();
+      var wakusei,earth,moon,jupiter,saturn,ring,venus;
+      var hahen = Array();
+      function initObject(){
+	  //球
+	  for(var i=0; i<20; i++){
+	      tama[i] = new THREE.Mesh(
+		  new THREE.CylinderGeometry( 0, 1, 2, 6),         
+		  new THREE.MeshBasicMaterial({color: 0xff00ff }) 
+	      );
+	      tama[i].rotation.set(0,0,-Math.PI);
+	  }
+	  for(var i=0; i<200; i++){
+	      tama2[i] = new THREE.Mesh(
+		  new THREE.CylinderGeometry( 0, 1, 2, 6),         
+		  new THREE.MeshBasicMaterial({color: 0x00ffff }) 
+	      );
+	  }
+
+	  //星
+	  for(var i=0; i<200; i++){
+	      hoshi[i] = new THREE.Mesh(
+		  new THREE.SphereGeometry( 1, 32, 32 ),         
+		  new THREE.MeshBasicMaterial({color: 0xffffff })
+	      );
+	      scene.add(hoshi[i]);
+	      if(i % 6 == 0){
+		  hoshi[i].position.set(Math.random()*800,Math.random()*600+500,Math.random()*600);
+	      }
+	       else if(i % 6 == 1){
+		   hoshi[i].position.set(-Math.random()*800,Math.random()*600+500,Math.random()*600);
+	       }
+	       else if(i % 6 == 2){
+		  hoshi[i].position.set(Math.random()*800,Math.random()*600+500,-Math.random()*600);
+	       }
+	       else if(i % 6 == 3){
+		  hoshi[i].position.set(-Math.random()*800,Math.random()*600 + 500,-Math.random()*600);
+	       }
+	      else if(i % 6 == 4){
+		  hoshi[i].position.set(-Math.random()*800 ,-Math.random()*600-500,-Math.random()*600);
+	      }
+	      else if(i % 6 == 5){
+		  hoshi[i].position.set(Math.random()*800,-Math.random()*600-500,-Math.random()*600);
+	      }
+	  }
+
+	  var texture = THREE.ImageUtils.loadTexture( 'earthmap1k.jpg' )
+	  earth = new THREE.Mesh(
+	      new THREE.SphereGeometry(30, 32, 32),
+	      new THREE.MeshBasicMaterial( { map: texture } )
+	  );
+	  scene.add(earth);
+	  earth.position.set(-230,500,-120);
+	  var texture2 = THREE.ImageUtils.loadTexture( 'moon.jpg' )
+	  moon = new THREE.Mesh(
+	      new THREE.SphereGeometry(10, 32, 32),
+	      new THREE.MeshBasicMaterial( { map: texture2 } )
+	  );
+	  scene.add(moon);
+	  moon.position.set(100,500,-100);
+
+	  var texture3 = THREE.ImageUtils.loadTexture( 'jupiter.jpg' )
+	  jupiter = new THREE.Mesh(
+	      new THREE.SphereGeometry(60, 32, 32),
+	      new THREE.MeshBasicMaterial( { map: texture3 } )
+	  );
+	  scene.add(jupiter);
+	  jupiter.position.set(200,-400,200);
+
+	  var texture4 = THREE.ImageUtils.loadTexture( 'saturn.jpg' )
+	  saturn = new THREE.Mesh(
+	      new THREE.SphereGeometry(30, 32, 32),
+	      new THREE.MeshBasicMaterial( { map: texture4 } )
+	  );
+	  scene.add(saturn);
+	  saturn.position.set(0,-500,0);
+	  ring = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 40, 40, 3, 32 ),
+	      new THREE.MeshLambertMaterial( { color: 0xeeee00 } )
+	  );
+	  scene.add(ring);
+	  ring.position.set(0,-500,0);
+	  ring.rotation.set(-Math.PI/4,0,0);
+
+
+	  var texture5 = THREE.ImageUtils.loadTexture( 'venus.jpg' )
+	  venus = new THREE.Mesh(
+	      new THREE.SphereGeometry(50, 32, 32),
+	      new THREE.MeshBasicMaterial( { map: texture5 } )
+	  );
+	  scene.add(venus);
+	  venus.position.set(800,800,100);
+
+
+	  wakusei = new THREE.Group();
+	  scene.add(wakusei);
+	  wakusei.add(earth);
+	  wakusei.add(moon);
+	  wakusei.add(jupiter);
+	  wakusei.add(saturn);
+	  wakusei.add(ring);
+	  wakusei.add(venus);
+	  
+	  //自分の移動
+	  idou1= new THREE.Mesh(
+	      new THREE.BoxGeometry( 1, 1, 1),
+	      new THREE.MeshLambertMaterial( { color: 0xeeee00 } )
+	  );
+	  scene.add(idou1);
+	  idou1.position.set(0,0,0);
+
+	  //自分
+	  haner = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 5, 5, 1, 3),
+	      new THREE.MeshBasicMaterial( { color: 0x6600ff } )
+	  );
+	  scene.add(haner);
+	  haner.rotation.set(0,2*Math.PI/3,0);
+	  hanel = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 5, 5, 1, 3),
+	      new THREE.MeshBasicMaterial( { color: 0x6600ff } )
+	  );
+	  scene.add(hanel);
+	  hanel.rotation.set(0,2*Math.PI/3,0);
+	  body = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 3, 3, 10, 32),
+	      new THREE.MeshBasicMaterial( { color: 0xeeee00 } )
+	  );
+	  scene.add(body);
+	  body.position.set(0,0,0);
+	  body.rotation.set(Math.PI/2,0,0);
+	  
+	  sentan = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 0, 3, 5, 32),
+	      new THREE.MeshBasicMaterial( { color: 0xeeee00 } )
+	  );
+	  scene.add(sentan);
+	  sentan.rotation.set(Math.PI/2,0,0);
+
+	  tabo1 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 1, 1, 1, 32),
+	      new THREE.MeshBasicMaterial( { color: 0xff33000 } )
+	  );
+	  scene.add(tabo1);
+	  tabo1.rotation.set(Math.PI/2,0,0);
+
+	  tabo2 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 1, 1, 1, 32),
+	      new THREE.MeshBasicMaterial( { color: 0xff3300 } )
+	  );
+	  scene.add(tabo2);
+	  tabo2.rotation.set(Math.PI/2,0,0);
+
+	  tabo1.position.set(body.position.x+1.5,body.position.y,body.position.z-5.1);
+	  tabo2.position.set(body.position.x-1.5,body.position.y,body.position.z-5.1);
+	  haner.position.set(body.position.x+2.8,body.position.y,body.position.z-2);
+	  hanel.position.set(body.position.x-2.8,body.position.y,body.position.z-2);
+	  sentan.position.set(body.position.x,body.position.y,body.position.z+7.5);
+
+
+	  sentouki = new THREE.Group();
+	  scene.add(sentouki);
+	  sentouki.add(tabo1);
+	  sentouki.add(tabo2);
+	  sentouki.add(haner);
+	  sentouki.add(hanel);
+	  sentouki.add(body);
+	  sentouki.add(sentan);
+	  sentouki.rotation.set(-Math.PI/2,0,0);
+
+
+	  //敵の移動
+	  idou2= new THREE.Mesh(
+	      new THREE.BoxGeometry( 1, 1, 1),
+	      new THREE.MeshBasicMaterial( { color: 0xeeee00 } )
+	  );
+	  scene.add(idou2);
+	  idou2.position.set(0,150,0);
+	  //敵
+	  haner2 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 5, 5, 1, 3),
+	      new THREE.MeshBasicMaterial( { color: 0xff367f } )
+	  );
+	  scene.add(haner2);
+	  haner2.rotation.set(0,2*Math.PI/3,0);
+	  hanel2 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 5, 5, 1, 3),
+	      new THREE.MeshBasicMaterial( { color: 0xff367f } )
+	  );
+	  scene.add(hanel2);
+	  hanel2.rotation.set(0,2*Math.PI/3,0);
+	  body2 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 3, 3, 10, 32),
+	      new THREE.MeshBasicMaterial( { color: 0x6600cc } )
+	  );
+	  scene.add(body2);
+	  body2.position.set(0,0,-198);
+	  body2.rotation.set(Math.PI/2,0,0);
+	  
+	  sentan2 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 0, 3, 5, 32),
+	      new THREE.MeshBasicMaterial( { color: 0x6600cc } )
+	  );
+	  scene.add(sentan2);
+	  sentan2.rotation.set(Math.PI/2,0,0);
+
+	  tabo12 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 1, 1, 1, 32),
+	      new THREE.MeshBasicMaterial( { color: 0xff33000 } )
+	  );
+	  scene.add(tabo12);
+	  tabo12.rotation.set(Math.PI/2,0,0);
+
+	  tabo22 = new THREE.Mesh(
+	      new THREE.CylinderGeometry( 1, 1, 1, 32),
+	      new THREE.MeshBasicMaterial( { color: 0xff3300 } )
+	  );
+	  scene.add(tabo22);
+	  tabo22.rotation.set(Math.PI/2,0,0);
+
+	  tabo12.position.set(body2.position.x+1.5,body2.position.y,body2.position.z-5.1);
+	  tabo22.position.set(body2.position.x-1.5,body2.position.y,body2.position.z-5.1);
+	  haner2.position.set(body2.position.x+2.8,body2.position.y,body2.position.z-2);
+	  hanel2.position.set(body2.position.x-2.8,body2.position.y,body2.position.z-2);
+	  sentan2.position.set(body2.position.x,body2.position.y,body2.position.z+7.5);
+
+	  sentouki2 = new THREE.Group();
+	  scene.add(sentouki2);
+	  sentouki2.add(tabo12);
+	  sentouki2.add(tabo22);
+	  sentouki2.add(haner2);
+	  sentouki2.add(hanel2);
+	  sentouki2.add(body2);
+	  sentouki2.add(sentan2);
+	  sentouki2.rotation.set(Math.PI/2,0,0);
+
+
+      }
+      var t=0,l=0;
+      var first = 0;
+      var teki;
+      var shoot = 0,shoot2 = 0;
+      var make = 0, kachi = 0;
+      var tama_exist = Array(),tama_exist2 = Array(); //球がシーンに存在しているか
+
+      for(var i=0; i<20; i++){
+	  tama_exist[i] = 0;
+      }
+      for(var i=0; i<200; i++){
+	  tama_exist2[i] = 0;
+      }
+      function loop() {
+
+	  //勝ちor負けが決まった時の処理
+	  if(make > 2 || kachi > 2){
+	      if(first == 0){
+		  first = 1;
+		  if(make > kachi){
+		      scene.remove(sentouki);
+		      for(var i=0; i<27; i++){
+			  hahen[i] = new THREE.Mesh(
+			      new THREE.CylinderGeometry( 1, 1, 0.2, 3),
+			      new THREE.MeshBasicMaterial( { color: 0xeeee00 } )
+			  );
+			  scene.add(hahen[i]);
+			  hahen[i].position.set(idou1.position.x,idou1.position.y,idou1.position.z);
+			  scene.remove(idou1);
+		      }
+		  }
+		  else{
+		      scene.remove(sentouki2);
+		      for(var i=0; i<27; i++){
+			  hahen[i] = new THREE.Mesh(
+			      new THREE.CylinderGeometry( 1, 1, 0.2, 3),
+			      new THREE.MeshBasicMaterial( { color: 0x6600cc } )
+			  );
+			  scene.add(hahen[i]);
+			  hahen[i].position.set(idou2.position.x,idou2.position.y,idou2.position.z);
+			  scene.remove(idou2);
+		      }
+		  }
+	      }
+	      else{
+		  l++;
+		  if(l < 60){
+		      for(var i=0;i < 27;i+=9){
+			  var x = Math.random();
+			  if(x*4 % 4 < 1){
+			      hahen[i].position.set(hahen[i].position.x+0.5,hahen[i].position.y,hahen[i].position.z+0.5);
+			  }else if(x*4 % 4 < 2){
+			      hahen[i].position.set(hahen[i].position.x-0.5,hahen[i].position.y,hahen[i].position.z+0.5);
+			  }else if(x*4 % 4 < 3){
+			      hahen[i].position.set(hahen[i].position.x+0.5,hahen[i].position.y,hahen[i].position.z-0.5);
+			  }else{
+			      hahen[i].position.set(hahen[i].position.x-0.5,hahen[i].position.y,hahen[i].position.z-0.5);
+			  }
+			  hahen[i+1].position.set(hahen[i+1].position.x-(i+1)/100*Math.random(),hahen[i+1].position.y,hahen[i+1].position.z-(i+1)/100*Math.random());
+			  hahen[i+2].position.set(hahen[i+2].position.x+(i+1)/100*Math.random(),hahen[i+2].position.y,hahen[i+2].position.z-(i+1)/100*Math.random());
+			  hahen[i+3].position.set(hahen[i+3].position.x-(i+1)/100*Math.random(),hahen[i+3].position.y,hahen[i+3].position.z+(i+1)/100*Math.random());
+			  hahen[i+4].position.set(hahen[i+4].position.x+(i+1)/100*Math.random(),hahen[i+4].position.y,hahen[i+4].position.z+(i+1)/100*Math.random());
+			  hahen[i+5].position.set(hahen[i+5].position.x,hahen[i+5].position.y,hahen[i+5].position.z+(i+1)/100*Math.random());
+			  hahen[i+6].position.set(hahen[i+6].position.x,hahen[i+6].position.y,hahen[i+6].position.z-(i+1)/100*Math.random());
+			  hahen[i+7].position.set(hahen[i+7].position.x+(i+1)/100*Math.random(),hahen[i+7].position.y,hahen[i+7].position.z);
+			  hahen[i+8].position.set(hahen[i+8].position.x-(i+1)/100*Math.random(),hahen[i+8].position.y,hahen[i+8].position.z);
+			  
+			  if(l%2 == 0){
+			      hahen[i+1].rotation.set(0,Math.random()*10,0);
+			      hahen[i+2].rotation.set(Math.random()*10,0);
+			      hahen[i+3].rotation.set(0,Math.random()*10,Math.random()*10);
+			      hahen[i+4].rotation.set(Math.random()*10,Math.random()*10,Math.random()*10);
+			      hahen[i+5].rotation.set(0,Math.random()*10,0);
+			      hahen[i+6].rotation.set(0,0,Math.random()*10);
+			      hahen[i+7].rotation.set(0,Math.random()*10,Math.random()*10);
+			      hahen[i+8].rotation.set(Math.random()*10,0,0);
+			  }
+		      }
+		  } 
+		  
+	      }
+	  }
+	  
+	  //いつもの処理
+	  else{
+	      t++;
+
+	      //星の回転
+	      wakusei.rotation.set( 0, 0, t/1000);
+	      earth.rotation.set( 0, t/100, t/100);
+	      moon.rotation.set( 0, t/100, t/100);
+	      venus.rotation.set( 0, t/100, t/100);
+	      jupiter.rotation.set( 0, t/100, t/100);
+	      saturn.rotation.set( 0, t/100, t/100);
+
+	      //敵の移動
+	      if(t % 25 == 0){
+		  teki = Math.random() *8;
+	      }
+	      if(t % 4 == 0){
+		  if(teki % 8 < 1){
+		      if( idou2.position.z < 60){
+			  idou2.position.z += 1;
+		      }
+		  }
+		  else if(teki % 8 < 4){
+		      if( idou2.position.x > -80){
+			  idou2.position.x -= 1;
+		      }
+		  }
+		  else if(teki % 8 < 7){
+		      if( idou2.position.x < 80){
+			  idou2.position.x += 1;
+		      }
+		  }
+		  else {
+		      if( idou2.position.z > -60){
+			  idou2.position.z -= 1;
+		      }
+		  }
+	      }
+
+	      //敵球発射
+	      if( t % 60 == 0){
+		  scene.add(tama[shoot%20]);
+		  tama[shoot%20].position.set(idou2.position.x,idou2.position.y,idou2.position.z);
+		  tama_exist[shoot%20] = 1;
+		  shoot ++;
+	      }
+	      //敵の球の位置
+	      for(var i=0; i<20; i++){
+		  if(tama[i].position.y < -100){
+		      scene.remove(tama[i]);
+		      tama_exist[i] = 0;
+		  }
+		  tama[i].position.set(tama[i].position.x,tama[i].position.y - 1,tama[i].position.z);
+		  if((tama[i].position.x-idou1.position.x)*(tama[i].position.x-idou1.position.x)+(tama[i].position.y-idou1.position.y)*(tama[i].position.y-idou1.position.y)+(tama[i].position.z-idou1.position.z)*(tama[i].position.z-idou1.position.z) <= 25){
+		      if(tama_exist[i] == 1){
+			  make ++;
+			  tama_exist[i] = 0;
+			  scene.remove(tama[i]);
+		      }
+		  }
+	      }
+
+	      
+	      for(var i=0; i<200; i++){
+		  if(tama2[i].position.y > 250){
+		      scene.remove(tama2[i]);
+		      tama_exist2[i] = 0;
+		  }
+		  tama2[i].position.set(tama2[i].position.x,tama2[i].position.y + 1,tama2[i].position.z);
+		  
+		  if((tama2[i].position.x-idou2.position.x)*(tama2[i].position.x-idou2.position.x)+(tama2[i].position.y-idou2.position.y)*(tama2[i].position.y-idou2.position.y)+(tama2[i].position.z-idou2.position.z)*(tama2[i].position.z-idou2.position.z) <= 25){
+		      if(tama_exist2[i] == 1){
+			  kachi ++;
+			  tama_exist2[i] = 0;
+			  scene.remove(tama2[i]);
+		      }
+		  }
+	      }
+	      
+	      sentouki.position.set(idou1.position.x,idou1.position.y,idou1.position.z);
+	      sentouki2.position.set(idou2.position.x,idou2.position.y-200,idou2.position.z);
+	  }
+	  renderer.clear();
+	  camera.lookAt( {x:0, y:0, z:0 } );
+	  renderer.render(scene, camera);
+	  window.requestAnimationFrame(loop);
+      }
+
+      window.addEventListener("keydown", onDocumentKeyDown);
+      function onDocumentKeyDown(event) {
+	  if(make <= 2 && kachi <= 2){
+	      var keyCode = event.which;
+	      if (keyCode == 38) {//上
+		  idou1.position.z += 1;
+	      }else if (keyCode == 40) {//下
+		  idou1.position.z -= 1;
+	      } else if (keyCode == 39) {//右
+		  idou1.position.x += 1;
+	      } else if (keyCode == 37) {//左
+		  idou1.position.x -= 1;
+	      } else if (keyCode == 83 ){ //視点を戻す
+		  camera.position.x = idou1.position.x;
+		  camera.position.y = idou1.position.y-100;
+		  camera.position.z = idou1.position.z;
+		  
+	      } else if( keyCode == 32 ){//球を撃つ
+		  scene.add(tama2[shoot2%200]);
+		  tama2[shoot2%200].position.set(idou1.position.x,idou1.position.y,idou1.position.z);
+		  tama_exist2[shoot2%200] = 1;
+		  shoot2 ++;
+	      }
+	  }
+      };
+
+      
+
+       var down = false;
+      var sy = 0, sz = 0;
+      window.onmousedown = function (ev){  //マウスダウン
+	  if (ev.target == renderer.domElement) { 
+	      down = true;
+	      idou = true;
+	      camex = camera.position.x;
+	      camez = camera.position.z;
+	      sy = ev.clientX; sz = ev.clientY;
+	  }
+      };
+      window.onmouseup = function(){       //マウスアップ
+	  down = false; 
+      };
+      window.onmousemove = function(ev) {  //マウスムーブ
+	  var speed = 2;
+	  if (down) {
+	      if (ev.target == renderer.domElement) { 
+		  var dy = -(ev.clientX - sy);
+		  var dz = -(ev.clientY - sz);
+		  camera.position.y += dy*speed;
+		  camera.position.z -= dz*speed;
+		  sy -= dy;
+		  sz -= dz;
+	      }
+	  }
+      }
+      window.onmousewheel = function(ev){//マウスホイール
+	  var speed = 0.2;		
+	  camera.position.x += ev.wheelDelta * speed ; 
+      }
+
+      
+      function threeStart() {
+	  initThree();
+	  initCamera();
+	  initScene();    
+	  initLight();
+	  initObject();
+	  loop();
+      }
+    </script>
+  </head>
+  
+  <body onload="threeStart();">
+    <div id="canvas-frame"></div>
+  </body>
+</html>

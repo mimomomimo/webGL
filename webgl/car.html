@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>宝探しゲーム</title>
+    <script src="three.min.js"></script>
+    <style type="text/css">
+      div#canvas-frame{
+	  border: none;
+	  cursor: pointer;
+	  width: 1000px;
+	  height:800px;
+	  background-color: #EEEEEE;
+      }
+    </style>
+    <script>
+      
+      var renderer;
+      function initThree() {
+	  width = document.getElementById('canvas-frame').clientWidth;
+	  height = document.getElementById('canvas-frame').clientHeight;  
+	  renderer = new THREE.WebGLRenderer({antialias: true});
+	  renderer.setSize(width, height );
+	  document.getElementById('canvas-frame').appendChild(renderer.domElement);
+	  renderer.setClearColorHex(0xFFFFFF, 1.0);
+	  renderer.shadowMapEnabled = true; 
+      }
+      
+      var camera; //最初はマップ全体が見えるように
+      function initCamera() {  
+	  camera = new THREE.PerspectiveCamera( 45 , width / height , 1 , 10000 );
+	  camera.position.x = 0;
+	  camera.position.y = -100;
+	  camera.position.z = 1000;
+	  camera.up.x = 0;
+	  camera.up.y = 0;
+	  camera.up.z = 1;
+	  camera.lookAt( {x:0, y:0, z:0 } );
+      }
+      var scene;
+      function initScene() {    
+	  scene = new THREE.Scene();
+      }
+      var light;
+      function initLight() {  
+	  light = new THREE.DirectionalLight(0xFFFFFF, 1.0, 0);
+	  light.position.set( -80, -1000, 1000 );
+	  light.castShadow = true;
+	  scene.add(light);
+      }
+
+      var cube1,cube2,cube3,yuka,taiya1,taiya2,tiya3,tiya4,taiya5,taiya6,taiya7,taiya8,cube3;
+      var yama,reef,tree,reef2,tree2,reef3,tree3,reef4,tree4,reef5,tree5;;
+      var car;
+      var futa,hako,sen1,sen2,sen3,sen4,ana1,ana2;
+      var kagi1,kagi2,kagi3,kagi4,kagi,takara;
+      function initObject(){
+
+	  //車
+	  cube = new THREE.Mesh(
+              new THREE.CubeGeometry(15,12,13),               
+              new THREE.MeshPhongMaterial({color: 0x4169e1}) 
+	  );
+	  scene.add(cube);
+	  cube.castShadow = true;
+	  cube.position.set(0,0,1);
+	  cube.receiveShadow = true;
+
+	  cube2 = new THREE.Mesh(
+              new THREE.CubeGeometry(8,12,8),               
+              new THREE.MeshPhongMaterial({color: 0x4169e1})
+	  );
+	  scene.add(cube2);
+	  cube2.castShadow = true;
+	  cube2.receiveShadow = true;
+
+
+	  //移動用
+	  cube3 = new THREE.Mesh(
+              new THREE.CubeGeometry(1,1,1),               
+              new THREE.MeshLambertMaterial({color: 0x4169e1}) 
+	  );
+	  scene.add(cube);
+	  cube3.position.set(0,0,8);
+	  
+
+	  
+	  taiya1 = new THREE.Mesh(
+              new THREE.CylinderGeometry(3,3,1,50),        
+              new THREE.MeshLambertMaterial({color: 0x000000})
+	  );
+	  scene.add(taiya1);
+	  taiya1.castShadow = true;
+	  
+	  taiya2 = new THREE.Mesh(
+              new THREE.CylinderGeometry(3,3,1,50),        
+              new THREE.MeshLambertMaterial({color: 0x000000})
+	  );
+	  scene.add(taiya2);
+	  taiya2.castShadow = true;
+	  
+	  taiya3 = new THREE.Mesh(
+              new THREE.CylinderGeometry(3,3,1,50),        
+              new THREE.MeshLambertMaterial({color: 0x000000}) 
+	  );
+	  scene.add(taiya3);
+	  taiya3.castShadow = true;
+
+	  
+	  
+	  taiya4 = new THREE.Mesh(
+              new THREE.CylinderGeometry(3,3,1,50),         
+              new THREE.MeshLambertMaterial({color: 0x000000})
+	  );
+	  scene.add(taiya4);
+	  taiya4.castShadow = true;
+
+	  taiya5 = new THREE.Mesh(
+              new THREE.CylinderGeometry(1,1,1,50),         
+              new THREE.MeshLambertMaterial({color: 0xffffff})
+	  );
+	  scene.add(taiya5);
+	  taiya5.castShadow = true;
+
+	  taiya6 = new THREE.Mesh(
+              new THREE.CylinderGeometry(1,1,1,50),         
+              new THREE.MeshLambertMaterial({color: 0xffffff})
+	  );
+	  scene.add(taiya6);
+	  taiya6.castShadow = true;
+
+	  taiya7 = new THREE.Mesh(
+              new THREE.CylinderGeometry(1,1,1,50),        
+              new THREE.MeshLambertMaterial({color: 0xffffff})
+	  );
+	  scene.add(taiya7);
+	  taiya7.castShadow = true;
+
+	  taiya8 = new THREE.Mesh(
+              new THREE.CylinderGeometry(1,1,1,50),        
+              new THREE.MeshLambertMaterial({color: 0xffffff}) 
+	  );
+	  scene.add(taiya8);
+	  taiya8.castShadow = true;
+	  cube2.position.set(cube.position.x-8,cube.position.y,cube.position.z-2.4);
+	  taiya1.position.set(cube.position.x+5.2,cube.position.y+6.7,cube.position.z-6);
+	  taiya2.position.set(cube.position.x-5.5,cube.position.y+6.7,cube.position.z-6);
+	  taiya3.position.set(cube.position.x+5.2,cube.position.y-6.7,cube.position.z-6);
+	  taiya4.position.set(cube.position.x-5.5,cube.position.y-6.7,cube.position.z-6);
+	  taiya5.position.set(cube.position.x+5.2,cube.position.y+6.8,cube.position.z-6);
+	  taiya6.position.set(cube.position.x-5.5,cube.position.y+6.8,cube.position.z-6);
+	  taiya7.position.set(cube.position.x+5.2,cube.position.y-6.8,cube.position.z-6);
+	  taiya8.position.set(cube.position.x-5.5,cube.position.y-6.8,cube.position.z-6);
+
+	  car = new THREE.Group();
+	  scene.add(car);
+	  car.add(cube);
+	  car.add(cube2);
+	  car.add(taiya1);
+	  car.add(taiya2);
+	  car.add(taiya3);
+	  car.add(taiya4);
+	  car.add(taiya5);
+	  car.add(taiya6);
+	  car.add(taiya7);
+	  car.add(taiya8);
+	  car.rotation.set(0,0,-Math.PI/2);
+	  
+	  //床
+	  yuka = new THREE.Mesh(
+              new THREE.PlaneGeometry(1000, 1000, 1),     
+              new THREE.MeshLambertMaterial({color: 0x00ff00})
+	  );
+	  scene.add(yuka);
+	  yuka.receiveShadow = true;
+	  //山
+	  yama = new THREE.Mesh(
+              new THREE.CylinderGeometry(80, 200, 100, 30),     
+              new THREE.MeshLambertMaterial({color: 0x00ff00})
+	  );
+	  scene.add(yama);
+	  yama.position.set(200,200,50);
+	  yama.rotation.set(Math.PI/2,0,0);
+	  yama.castShadow = true;
+	  yama.receiveShadow = true;
+
+	  //木
+	 reef = new THREE.Mesh(
+              new THREE.SphereGeometry( 30, 18),     
+              new THREE.MeshLambertMaterial({color: 0x006400})
+	  );
+	  scene.add(reef);
+	  reef.position.set(-100,100,50)
+	  reef.castShadow = true;
+
+	  tree  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 7, 7, 24, 32 ),   
+              new THREE.MeshLambertMaterial({color: 0x8b4513})
+	  );
+	  scene.add(tree);
+	  tree.position.set(-100,100,12);
+	  tree.rotation.set(Math.PI/2,0,0);
+	  tree.castShadow = true;
+
+	  
+	  reef2 = new THREE.Mesh(
+              new THREE.SphereGeometry( 30, 6),     
+              new THREE.MeshLambertMaterial({color: 0x006400})
+	  );
+	  scene.add(reef2);
+	  reef2.position.set(-320,300,50);
+	  reef2.castShadow = true;
+
+	  tree2  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 7, 7, 28, 32 ),   
+              new THREE.MeshLambertMaterial({color: 0x8b4513})
+	  );
+	  scene.add(tree2);
+	  tree2.position.set(-320,300,14);
+	  tree2.rotation.set(Math.PI/2,0,0);
+	  tree2.castShadow = true;
+
+	  
+	  reef3 = new THREE.Mesh(
+              new THREE.SphereGeometry( 30, 18),     
+              new THREE.MeshLambertMaterial({color: 0x006400})
+	  );
+	  scene.add(reef3);
+	  reef3.position.set(200,-300,50);
+	  reef3.castShadow = true;
+
+	  tree3  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 7, 7, 24, 32 ),   
+              new THREE.MeshLambertMaterial({color: 0x8b4513})
+	  );
+	  scene.add(tree3);
+	  tree3.position.set(200,-300,12);
+	  tree3.rotation.set(Math.PI/2,0,0);
+	  tree3.castShadow = true;
+
+	  
+	  reef4 = new THREE.Mesh(
+              new THREE.SphereGeometry( 30, 8),     
+              new THREE.MeshLambertMaterial({color: 0x006400})
+	  );
+	  scene.add(reef4);
+	  reef4.position.set(-300,-200,50)
+	  reef4.castShadow = true;
+
+	  tree4  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 7, 7, 24, 32 ),   
+              new THREE.MeshLambertMaterial({color: 0x8b4513})
+	  );
+	  scene.add(tree4);
+	  tree4.position.set(-300,-200,12);
+	  tree4.rotation.set(Math.PI/2,0,0);
+	  tree4.castShadow = true;
+
+	  
+	  reef5 = new THREE.Mesh(
+              new THREE.SphereGeometry( 30, 12),     
+              new THREE.MeshLambertMaterial({color: 0x006400})
+	  );
+	  scene.add(reef5);
+	  reef5.position.set(350,0,50)
+	  reef5.castShadow = true;
+
+	  tree5  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 7, 7, 24, 32 ),   
+              new THREE.MeshLambertMaterial({color: 0x8b4513})
+	  );
+	  scene.add(tree5);
+	  tree5.position.set(350,0,12);
+	  tree5.rotation.set(Math.PI/2,0,0);
+	  tree5.castShadow = true;
+
+
+	  //宝箱
+	  
+	  hako = new THREE.Mesh(
+              new THREE.CubeGeometry(18,14,10),               
+              new THREE.MeshPhongMaterial({color: 0xdc143c}) 
+	  );
+	  scene.add(hako);
+	  hako.castShadow = true;
+	  hako.position.set(-Math.random()*300-20,Math.random()*400,5);
+
+	   futa  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 7, 7, 18, 32),   
+              new THREE.MeshLambertMaterial({color: 0xdc143c})
+	  );
+	  scene.add(futa);
+	  futa.position.set(hako.position.x,hako.position.y,10);
+	  futa.castShadow = true;
+	  futa.rotation.set(0,0,Math.PI/2);
+
+	  ana1 = new THREE.Mesh(
+              new THREE.CylinderGeometry(1.5,1.5,0.01,50),        
+              new THREE.MeshLambertMaterial({color: 0xffff00})
+	  );
+	  scene.add(ana1);
+	  ana1.position.set(hako.position.x,hako.position.y - 7.1,10);
+	  ana2 = new THREE.Mesh(
+              new THREE.CylinderGeometry(0.5,0.5,0.1,50),        
+              new THREE.MeshLambertMaterial({color: 0x000000})
+	  );
+	  scene.add(ana2);
+	  ana2.position.set(hako.position.x,hako.position.y - 7.2,10);
+
+	  sen1 = new THREE.Mesh(
+              new THREE.CubeGeometry(18,0.1,0.7),               
+              new THREE.MeshPhongMaterial({color: 0xffff00}) 
+	  );
+	  scene.add(sen1);
+	  sen1.position.set(hako.position.x,hako.position.y - 7.01,10);
+
+
+	  sen2 = new THREE.Mesh(
+              new THREE.CubeGeometry(0.1,14,0.7),               
+              new THREE.MeshPhongMaterial({color: 0xffff00}) 
+	  );
+	  scene.add(sen2);
+	  sen2.position.set(hako.position.x+9.1,hako.position.y,10);
+
+	  sen3 = new THREE.Mesh(
+              new THREE.CubeGeometry(0.1,14,0.7),               
+              new THREE.MeshPhongMaterial({color: 0xffff00}) 
+	  );
+	  scene.add(sen3);
+	  sen3.position.set(hako.position.x - 9.1,hako.position.y,10);
+
+
+	  sen4 = new THREE.Mesh(
+              new THREE.CubeGeometry(18,0.1,0.7),               
+              new THREE.MeshPhongMaterial({color: 0xffff00}) 
+	  );
+	  scene.add(sen4);
+	  sen4.position.set(hako.position.x,hako.position.y + 7.1,10);
+
+	  takara  = new THREE.Mesh(
+              new THREE.SphereGeometry( 5, 12),   
+              new THREE.MeshPhongMaterial({color: 0xffff00})
+	  );
+	  scene.add(takara);
+	  takara.position.set(hako.position.x,hako.position.y,8);
+
+	  //鍵
+	  kagi1 = new THREE.Mesh(
+              new THREE.TorusGeometry(1,1.2),               
+              new THREE.MeshPhongMaterial({color: 0xffff00}) 
+	  );
+	  scene.add(kagi1);
+	  kagi1.position.set(210,210,100.1);
+
+	  kagi2  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 0.8, 0.8, 4, 32 ),   
+              new THREE.MeshPhongMaterial({color: 0xffff00})
+	  );
+	  scene.add(kagi2);
+
+	  kagi3  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 0.5, 0.5, 2, 32 ),   
+              new THREE.MeshPhongMaterial({color: 0xffff00})
+	  );
+	  scene.add(kagi3);
+	  kagi3.rotation.set(0,0,Math.PI/2);
+
+	  kagi4  = new THREE.Mesh(
+              new THREE.CylinderGeometry( 0.5, 0.5, 2, 32 ),   
+              new THREE.MeshPhongMaterial({color: 0xffff00})
+	  );
+	  scene.add(kagi4);
+	  kagi4.rotation.set(0,0,Math.PI/2);
+	  kagi2.position.set(kagi1.position.x,kagi1.position.y - 3.8, kagi1.position.z);
+	  kagi3.position.set(kagi1.position.x+1,kagi1.position.y - 4.5, kagi1.position.z);
+	  kagi4.position.set(kagi1.position.x+1,kagi1.position.y - 3, kagi1.position.z);
+
+	  
+      }
+      var get = 0;
+      function loop() {
+	  renderer.clear();
+	  car.position.set(cube3.position.x,cube3.position.y,cube3.position.z);
+	  
+	  if(get == 1){
+	      kagi1.position.set(cube3.position.x,cube3.position.y,cube3.position.z + 8);
+	      kagi2.position.set(kagi1.position.x,kagi1.position.y - 3.8, kagi1.position.z);
+	      kagi3.position.set(kagi1.position.x+1,kagi1.position.y - 4.5, kagi1.position.z);
+	      kagi4.position.set(kagi1.position.x+1,kagi1.position.y - 3, kagi1.position.z);
+	      //鍵を持った状態で宝箱に近づくと画面が真っ白に
+	      if((cube3.position.x - hako.position.x)*(cube3.position.x - hako.position.x) + (cube3.position.y - hako.position.y)*(cube3.position.y - hako.position.y) <= 25){
+		  scene.remove(futa);
+		  scene.remove(kagi1);
+		  scene.remove(kagi2);
+		  scene.remove(kagi3);
+		  scene.remove(kagi4);
+		 /* light2 = new THREE.RectAreaLight(0xFFFFFF, 5, 5, 0.1);
+		  scene.add(light2);
+		  light2.position.sett(-50,50,10);*/
+		  
+	      }
+	  }
+	  
+	  camera.lookAt( {x:car.position.x, y:car.position.y, z:car.position.z} );
+	  renderer.render(scene, camera);
+	  window.requestAnimationFrame(loop);
+      }
+      window.addEventListener("keydown", onDocumentKeyDown);
+      var kakudo = 0;
+      function onDocumentKeyDown(event) {
+	  var keyCode = event.which;
+	  if (keyCode == 38) {//上
+	      //車の向きで制御
+	      if(kakudo % 8 == 7 || kakudo % 8 == -1){//右上
+		  cube3.position.x += 1;
+		  cube3.position.y += 1;
+	      }
+	      else if(kakudo % 8 == 6 || kakudo % 8 == -2){//右
+		  cube3.position.x += 2;
+	      }
+	      else if(kakudo % 8 == 5 || kakudo % 8 == -3){//右下
+		  cube3.position.x += 1;
+		  cube3.position.y -= 1;
+	      }
+	      else if(kakudo % 8 == 4 || kakudo % 8 == -4){//下
+		  cube3.position.y -= 2;
+	      }
+	      else if(kakudo % 8 == 3 || kakudo % 8 == -5){//左下
+		  cube3.position.x -= 1;
+		  cube3.position.y -= 1;
+	      }
+	      else if(kakudo % 8 == 2 || kakudo % 8 == -6){//左
+		  cube3.position.x -= 2;
+	      }
+	      else if(kakudo % 8 == 1 || kakudo % 8 == -7){//左上
+		  cube3.position.x -= 1;
+		  cube3.position.y += 1;
+	      }
+	      else if(kakudo % 8 == 0 || kakudo % 8 == -0){//上
+		  cube3.position.y += 2;
+	      }
+	      
+	  }else if (keyCode == 40) {//下
+	      if(kakudo % 8 == 7 || kakudo % 8 == -1){//右上
+		  cube3.position.x -= 1;
+		  cube3.position.y -= 1;
+	      }
+	      else if(kakudo % 8 == 6 || kakudo % 8 == -2){//右
+		  cube3.position.x -= 2;
+	      }
+	      else if(kakudo % 8 == 5 || kakudo % 8 == -3){//右下
+		  cube3.position.x -= 1;
+		  cube3.position.y += 1;
+	      }
+	      else if(kakudo % 8 == 4 || kakudo % 8 == -4){//下
+		  cube3.position.y += 2;
+	      }
+	      else if(kakudo % 8 == 3 || kakudo % 8 == -5){//左下
+		  cube3.position.x += 1;
+		  cube3.position.y += 1;
+	      }
+	      else if(kakudo % 8 == 2 || kakudo % 8 == -6){//左
+		  cube3.position.x += 2;
+	      }
+	      else if(kakudo % 8 == 1 || kakudo % 8 == -7){//左上
+		  cube3.position.x += 1;
+		  cube3.position.y -= 1;
+	      }
+	      else if(kakudo % 8 == 0 || kakudo % 8 == -0){//上
+		  cube3.position.y -= 2;
+	      }
+	  } else if (keyCode == 39) {//右
+	      kakudo -= 1;
+	      car.rotation.set(0,0,Math.PI/4*kakudo-Math.PI/2);
+	  } else if (keyCode == 37) {//左
+	      kakudo += 1;
+	      car.rotation.set(0,0,Math.PI/4*kakudo-Math.PI/2);
+	  } else if (keyCode == 83 ){ //視点を戻す
+	      camera.position.x = car.position.x;
+	      camera.position.y = car.position.y-100;
+	      camera.position.z = car.position.z + 1;
+	      
+	  }
+	  if((cube3.position.y-200)*(cube3.position.y-200)+(cube3.position.x-200)*(cube3.position.x-200) <= 200*200){
+	      if((cube3.position.y-200)*(cube3.position.y-200)+(cube3.position.x-200)*(cube3.position.x-200) > 80*80){
+		  cube3.position.z = (200 - Math.sqrt((cube3.position.y-200)*(cube3.position.y-200)+(cube3.position.x-200)*(cube3.position.x-200)))*0.833 + 9;
+	      }
+	      
+	  }
+	  else{
+	      cube3.position.z = 8;
+	  }
+	  if((cube3.position.x - kagi1.position.x)*(cube3.position.x - kagi1.position.x) + (cube3.position.y == kagi1.position.y)*(cube3.position.y == kagi1.position.y) <= 5){
+	      get = 1;
+	  }
+      };
+
+      //マウス操作でカメラの位置を変える
+      var down = false;
+      var sy = 0, sz = 0;
+      window.onmousedown = function (ev){  //マウスダウン
+	  if (ev.target == renderer.domElement) { 
+	      down = true;
+	      sy = ev.clientX; sz = ev.clientY;
+	  }
+      };
+      window.onmouseup = function(){       //マウスアップ
+	  down = false; 
+      };
+      window.onmousemove = function(ev) {  //マウスムーブ
+	  var speed = 2;
+	  if (down) {
+	      if (ev.target == renderer.domElement) { 
+		  var dy = -(ev.clientX - sy);
+		  var dz = -(ev.clientY - sz);
+		  camera.position.y += dy*speed;
+		  camera.position.z -= dz*speed;
+		  sy -= dy;
+		  sz -= dz;
+	      }
+	  }
+      }
+      window.onmousewheel = function(ev){//マウスホイール
+	  var speed = 0.2;		
+	  camera.position.x += ev.wheelDelta * speed ; 
+      }
+
+      
+      function threeStart() {
+	  
+	  initThree();
+	  initCamera();
+	  initScene();    
+	  initLight();
+	  initObject();
+	  loop();
+      }
+    </script>
+  </head>
+  
+  <body onload="threeStart();">
+    <div id="canvas-frame"></div>
+  </body>
+</html>
